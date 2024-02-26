@@ -25,8 +25,7 @@ class Activity(db.Model, SerializerMixin):
     difficulty = db.Column(db.Integer)
 
     # Add relationship
-    signups = db.relationship('Signup', back_populates = 'activity', cascade='all, delete')
-    campers = association_proxy('signups', 'camper')
+    signups = db.relationship('Signup', back_populates = 'activity')
 
     # Add serialization rules
     serialize_rules = ('-signups.activity', )
@@ -43,8 +42,7 @@ class Camper(db.Model, SerializerMixin):
     age = db.Column(db.Integer)
 
     # Add relationship
-    signups = db.relationship('Signup', back_populates = 'camper', cascade='all, delete')
-    activities = association_proxy('signups', 'activity')
+    signups = db.relationship('Signup', back_populates = 'camper')
 
     # Add serialization rules
     serialize_rules = ('-signups.camper', )
@@ -58,7 +56,7 @@ class Camper(db.Model, SerializerMixin):
     
     @validates('age')
     def validate_age(self, key, age):
-        if not 8 < age < 18:
+        if not 8 <= age <= 18:
             raise ValueError('validation errors')
         return age
     
@@ -75,8 +73,8 @@ class Signup(db.Model, SerializerMixin):
     activity_id = db.Column(db.Integer, db.ForeignKey('activities.id'))
 
     # Add relationships
-    activity = db.relationship(Activity, back_populates = 'signups')
-    camper = db.relationship(Camper, back_populates = 'signups')
+    activity = db.relationship('Activity', back_populates = 'signups')
+    camper = db.relationship('Camper', back_populates = 'signups')
 
     # Add serialization rules
     serialize_rules = ('-activity.signups', 'camper.signups')

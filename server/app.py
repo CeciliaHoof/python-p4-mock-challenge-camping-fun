@@ -89,6 +89,11 @@ def activity_by_id(id):
         status = 404
     else:
         if request.method == 'DELETE':
+            assoc_signups = Signup.query.filter(Signup.activity_id == id).all()
+
+            for signup in assoc_signups:
+                db.session.delete(signup)
+
             db.session.delete(activity)
             db.session.commit()
 
